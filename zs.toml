@@ -1,0 +1,3 @@
+# Pins the zs session profile of this project, so that `zs deploy` never runs as another account of the same machine.
+# It holds no secret. The deploy workflow overrides it with --profile.
+session = "iuripersonal"

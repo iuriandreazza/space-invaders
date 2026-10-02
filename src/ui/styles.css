@@ -1,0 +1,665 @@
+:root {
+  --bg: #05060d;
+  --panel: #0b1020;
+  --panel-raised: #121a33;
+  --panel-border: #26335f;
+  --ink: #e8f0ff;
+  --muted: #96a3c8;
+  --green: #3dff7a;
+  --cyan: #4ee8ff;
+  --pink: #ff4fa3;
+  --orange: #ff9a3c;
+  --orange-deep: #8a3d0c;
+  --red: #ff4d3d;
+  --red-deep: #7a1a12;
+  --yellow: #ffe14d;
+  --font: ui-monospace, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  line-height: 1.5;
+}
+
+/*
+ * The page is a column: the screen, then the footer. The consent banner is fixed to the bottom of the window, so the
+ * page keeps `--banner-room` free at its end while the banner is up (the footer would be hidden behind it otherwise).
+ * The banner is taller where its text wraps more.
+ */
+.app {
+  --banner-room: 0px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  padding-bottom: var(--banner-room);
+}
+
+.app[data-consent-open='true'] {
+  --banner-room: 14rem;
+}
+
+@media (min-width: 40rem) {
+  .app[data-consent-open='true'] {
+    --banner-room: 10rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  .app[data-consent-open='true'] {
+    --banner-room: 7rem;
+  }
+}
+
+.screen {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  padding: 1.5rem 1rem;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.hint {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.error {
+  margin: 0;
+  color: var(--red);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 2px;
+}
+
+/* ---- Title ---- */
+
+.title {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  justify-items: stretch;
+  width: min(100%, 60rem);
+  margin: 0 auto;
+}
+
+@media (min-width: 52rem) {
+  .title {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .title__header {
+    grid-column: 1 / -1;
+  }
+}
+
+.title__header {
+  text-align: center;
+  padding-top: 1rem;
+}
+
+/* Stepped shadows, no blur: the edges stay as hard as the pixels of the game. */
+.logo {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2.25rem, 9vw, 4.25rem);
+  font-weight: 900;
+  line-height: 1.1;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-wrap: balance;
+  color: var(--orange);
+  text-shadow:
+    3px 3px 0 var(--red),
+    6px 6px 0 var(--red-deep);
+}
+
+.logo--small {
+  font-size: clamp(2rem, 8vw, 3.25rem);
+}
+
+.panel {
+  background: var(--panel);
+  border: 2px solid var(--panel-border);
+  border-radius: 0.5rem;
+  padding: 1.25rem;
+}
+
+.panel__title {
+  margin: 1.5rem 0 0.75rem;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+
+.panel > .panel__title:first-child {
+  margin-top: 0;
+}
+
+.rules {
+  margin: 1.25rem 0 0;
+  font-size: 0.9rem;
+}
+
+.controls {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0;
+}
+
+.controls__row {
+  display: grid;
+  grid-template-columns: 8.5rem 1fr;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.controls dt {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.controls dd {
+  margin: 0;
+  color: var(--muted);
+}
+
+kbd {
+  display: inline-block;
+  min-width: 1.8rem;
+  padding: 0.1rem 0.45rem;
+  border: 1px solid var(--panel-border);
+  border-bottom-width: 3px;
+  border-radius: 0.3rem;
+  background: var(--panel-raised);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: center;
+}
+
+.scoring {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+}
+
+.scoring__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.scoring dt {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.scoring dd {
+  margin: 0;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  color: var(--yellow);
+}
+
+.scoring__row--squid dt {
+  color: var(--pink);
+}
+
+.scoring__row--crab dt {
+  color: var(--cyan);
+}
+
+.scoring__row--octopus dt {
+  color: var(--green);
+}
+
+.scoring__row--ufo dt {
+  color: var(--red);
+}
+
+/* The sprites are all the same height or less, and are centered in a column of one width so that the names line up. */
+.scoring__icon {
+  display: inline-flex;
+  justify-content: center;
+  width: 2.5rem;
+}
+
+.sprite {
+  flex: none;
+}
+
+/* ---- Buttons ---- */
+
+.button {
+  appearance: none;
+  border: 2px solid var(--panel-border);
+  border-radius: 0.4rem;
+  background: var(--panel-raised);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.7rem 1.4rem;
+  cursor: pointer;
+  transition:
+    border-color 0.1s,
+    transform 0.05s;
+}
+
+.button:hover:not(:disabled) {
+  border-color: var(--cyan);
+}
+
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.button--primary {
+  border-color: var(--orange-deep);
+  background: var(--orange);
+  color: #1a0c00;
+  box-shadow: 0 4px 0 var(--orange-deep);
+}
+
+.button--primary:hover:not(:disabled) {
+  border-color: var(--orange-deep);
+  background: #ffb066;
+}
+
+.button--primary:active:not(:disabled) {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--orange-deep);
+}
+
+.button--small {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.8rem;
+}
+
+.link-button {
+  appearance: none;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--muted);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-button:hover {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: none;
+  }
+}
+
+/* ---- Leaderboard ---- */
+
+.leaderboard {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.leaderboard th,
+.leaderboard td {
+  padding: 0.35rem 0.5rem;
+  text-align: left;
+}
+
+.leaderboard th {
+  color: var(--muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.leaderboard th:last-child,
+.leaderboard td:last-child {
+  text-align: right;
+}
+
+.leaderboard tbody tr:nth-child(odd) {
+  background: rgb(255 255 255 / 0.04);
+}
+
+.leaderboard tbody tr:first-child td {
+  color: var(--yellow);
+  font-weight: 700;
+}
+
+.leaderboard .leaderboard__you {
+  background: rgb(255 79 163 / 0.35);
+  color: #fff;
+}
+
+/* ---- Game ---- */
+
+/*
+ * The game frame is as tall as the window leaves room for and 3:4 like the game, but never wider than the screen:
+ * a phone is held by its width, a monitor by its height. `--game-chrome` is what the screen and the page put around
+ * the frame (the bar below it, the footer, the gaps). Where the window is big enough for the consent banner to be a
+ * strip below the game, the frame leaves its room too, so that the banner never covers it; on a phone the frame is
+ * limited by its width anyway and the banner covers the footer and the bar instead.
+ */
+.game {
+  --game-chrome: 10.75rem;
+  --game-banner-room: 0px;
+  gap: 0.5rem;
+  padding: 0.75rem 0.5rem;
+}
+
+@media (min-width: 48rem) {
+  .game {
+    --game-banner-room: var(--banner-room);
+  }
+}
+
+.game__frame {
+  position: relative;
+  width: min(100%, max(18rem, calc((100svh - var(--game-chrome) - var(--game-banner-room)) * 3 / 4)));
+  aspect-ratio: 3 / 4;
+  background: #000;
+  box-shadow:
+    0 0 0 3px var(--panel-border),
+    0 0 2rem rgb(78 232 255 / 0.12);
+}
+
+/* The reticle is drawn by the game: the pointer would only get in its way. */
+.game__canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
+  cursor: none;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.game__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: rgb(5 6 13 / 0.8);
+  cursor: default;
+}
+
+.game__overlay-title {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.5rem, 6vw, 2.75rem);
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--orange);
+  text-shadow: 3px 3px 0 var(--red-deep);
+}
+
+.game__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem 1.5rem;
+  font-size: 0.8rem;
+}
+
+.game__hint--coarse {
+  display: none;
+}
+
+@media (pointer: coarse) {
+  .game__hint--fine {
+    display: none;
+  }
+
+  .game__hint--coarse {
+    display: block;
+  }
+}
+
+/* ---- Game over ---- */
+
+.gameover {
+  justify-content: center;
+  text-align: center;
+  width: min(100%, 32rem);
+  margin: 0 auto;
+}
+
+.final-score {
+  margin: 0;
+  font-size: 1.25rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.final-score strong {
+  color: var(--yellow);
+  font-size: 2rem;
+  margin-left: 0.5rem;
+}
+
+.save {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  width: 100%;
+}
+
+.save label {
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+.initials {
+  width: 9rem;
+  padding: 0.4rem 0.5rem;
+  border: 3px solid var(--panel-border);
+  border-radius: 0.4rem;
+  background: var(--bg);
+  color: var(--green);
+  font: inherit;
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: 0.3em;
+  text-align: center;
+  text-indent: 0.3em;
+  text-transform: uppercase;
+}
+
+.initials::placeholder {
+  color: #2a3566;
+}
+
+.rank {
+  margin: 0 0 0.75rem;
+  color: var(--pink);
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.gameover .panel {
+  width: 100%;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+/* ---- Footer ---- */
+
+.site-footer {
+  padding: 1rem;
+  border-top: 1px solid var(--panel-border);
+  text-align: center;
+  font-size: 0.75rem;
+}
+
+.credits {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem 1.25rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.credits a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.credits a:hover,
+.credits a:focus-visible {
+  color: var(--ink);
+  text-decoration: underline;
+}
+
+/* Only the decorative icon is dimmed: fading the text as well would take it below the contrast it needs. */
+.credits img {
+  border-radius: 0.2rem;
+  opacity: 0.75;
+}
+
+.credits a:hover img,
+.credits a:focus-visible img {
+  opacity: 1;
+}
+
+.site-footer__disclaimer {
+  max-width: 46rem;
+  margin: 0.5rem auto 0;
+  color: var(--muted);
+}
+
+/* ---- Consent banner ---- */
+
+.consent {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 20;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 0.5rem 1.5rem;
+  max-height: 80svh;
+  overflow-y: auto;
+  padding: 0.6rem max(1rem, calc((100% - 64rem) / 2));
+  border-top: 2px solid var(--cyan);
+  background: var(--panel-raised);
+  box-shadow: 0 -0.6rem 2rem rgb(0 0 0 / 0.6);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+@media (min-width: 40rem) {
+  .consent {
+    grid-template-columns: minmax(0, 1fr) auto;
+    padding-block: 0.75rem;
+    font-size: 0.8rem;
+    line-height: 1.5;
+  }
+}
+
+.consent__text p {
+  margin: 0;
+}
+
+.consent__details {
+  margin-top: 0.4rem;
+}
+
+.consent__details summary {
+  width: fit-content;
+  color: var(--cyan);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.consent__details ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.1rem;
+}
+
+.consent__details li + li {
+  margin-top: 0.4rem;
+}
+
+.consent__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.consent__status {
+  margin: 0;
+  color: var(--cyan);
+  font-variant-numeric: tabular-nums;
+}
+
+.consent__buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.consent__buttons .button {
+  flex: 1;
+}

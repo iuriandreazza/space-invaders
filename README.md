@@ -4,6 +4,8 @@ A browser tribute to the arcade classic Space Invaders, in the spirit of *Space 
 
 Aim the reticle at the fleet and burn it down before it lands. The game is the same on every run, so scores are comparable between players.
 
+![Two lasers from the corner cannons meet on the reticle, burning a hole in the fleet](docs/screenshot.png)
+
 > Fan-made tribute. *Space Invaders* (Taito, 1978) and *Space Invaders Frenzy* (Raw Thrills and Taito, 2017) belong to their respective owners, who are not affiliated with and do not endorse this project. The code here is original.
 
 ## Features
@@ -95,7 +97,7 @@ Every push to `main` is verified by [GitHub Actions](.github/workflows/ci.yml), 
 
 ### Link previews and credits
 
-There are no Open Graph or X card tags yet: they need absolute URLs (crawlers do not run scripts), and the public address of the site only exists after the first deploy. Once it does, the canonical link, `og:url`, `og:image` and `twitter:*` tags go in [`index.html`](index.html) together with a 1200×630 picture in `public/`, all three addresses spelled out.
+The tags that make a shared link look good (Open Graph and the X card) are in [`index.html`](index.html), and the 1200×630 picture they point to is [`public/og-image.png`](public/og-image.png), made from a real frame of the game. Crawlers do not run scripts and only follow absolute URLs, so the address of the site is written out in three places there: the canonical link, `og:url` and `og:image`. Change all three when the site gets another address (a test keeps them together and checks the picture), and ask Facebook's Sharing Debugger or LinkedIn's Post Inspector to fetch the page again, since they keep the old preview.
 
 The credits in the footer use the favicons of the three sites, in [`public/credits`](public/credits). They are copies on purpose: the content security policy only lets the page load images from its own origin. A test checks that every icon the footer points to exists.
 

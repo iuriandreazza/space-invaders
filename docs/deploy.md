@@ -14,7 +14,7 @@ updated: 2026-10-02
 
 How the game goes from a commit on `main` to a public URL, and how to run it there. The reasoning, and why it is one instance and not several, is in [ADR 0004](adr/0004-single-instance-on-zeroserver.md).
 
-This setup was first worked out and run for River Raid, the author's earlier game and the first app on the platform. Whatever below was observed on the platform is marked as such: it was seen there, and is to be re-checked the first time this app is deployed.
+This setup was first worked out and run for River Raid, the author's earlier game and the first app on the platform. Whatever below was observed on the platform is marked with the app it was seen on: River Raid on 2026-10-01, Space Invaders on 2026-10-02, the day of its first deploy (https://app-09552e76.apps.zeroserver.cc).
 
 ## What runs where
 
@@ -57,7 +57,7 @@ push to main ─▶ GitHub Actions ─▶ verify ─▶ image (amd64 + arm64) �
    gh variable set APP_URL --body https://app-xxxx.apps.zeroserver.cc --repo iuriandreazza/space-invaders
    gh variable set DEPLOY_ENABLED --body true --repo iuriandreazza/space-invaders
    ```
-   That address is also what the link-preview tags need: [`index.html`](../index.html) has none yet, because crawlers only follow absolute URLs and the address did not exist before the deploy. Add the canonical link, `og:url` and `og:image` (with a 1200×630 picture in `public/`) using it.
+   That address is also what the link-preview tags need: the canonical link, `og:url` and `og:image` of [`index.html`](../index.html) spell it out, because crawlers only follow absolute URLs (a test keeps the three together). If the app is ever deployed under another address, change them.
 6. **Check which address the server sees**, because the rate limit depends on it. `TRUST_PROXY` in `zs.yaml` says how many proxies stand in front of the container and append to `X-Forwarded-For`. Redeploy with `LOG_CLIENT_ADDRESS=true`, send a request that is refused (once with a forged `X-Forwarded-For`) and read the log:
    ```bash
    curl -s -X POST -H 'content-type: text/plain' -d x "$APP_URL/api/sessions"      # 415, logged
@@ -65,7 +65,7 @@ push to main ─▶ GitHub Actions ─▶ verify ─▶ image (amd64 + arm64) �
    ```
    The `client` field has to be your own public address. If it is the address of a proxy, or `unknown`, every player shares one allowance and the value of `TRUST_PROXY` is wrong. Turn `LOG_CLIENT_ADDRESS` off again afterwards: the log is better without addresses.
 
-   **Measured on the first app deployed on the platform (River Raid, 2026-10-01): `TRUST_PROXY=2`; to be re-checked for this app.** The path there was Caddy (the gateway's edge), then the FRP vhost, then the container, and each of the two appends to `X-Forwarded-For`. With `1` the log showed the Docker address of the gateway side (`172.18.0.3`) for everybody, which would have put every player in one rate-limit bucket. With `2` it showed the real client address, and an `X-Forwarded-For` forged by the client changed nothing, because Caddy replaces it. The manifest carries `2` on that evidence; this step is how to confirm it for Space Invaders.
+   **Measured on both apps (River Raid, 2026-10-01; Space Invaders, 2026-10-02): `TRUST_PROXY=2`.** The path is Caddy (the gateway's edge), then the FRP vhost, then the container, and each of the two appends to `X-Forwarded-For`. With `1` the log showed the Docker address of the gateway side (`172.18.0.3`) for everybody, which would have put every player in one rate-limit bucket. With `2` it showed the real client address, and an `X-Forwarded-For` forged by the client changed nothing, because Caddy replaces it. On Space Invaders, with `2`, the log showed the public address of the machine that sent the requests, and the request with the forged header was logged with that same address. The manifest carries `2` on that evidence.
 7. **Optional: Google Analytics.** The client reads the measurement id when it is built, so it is a repository variable that the workflow hands to the image build, not something the running container reads:
    ```bash
    gh variable set GA_MEASUREMENT_ID --body G-XXXX --repo iuriandreazza/space-invaders
@@ -88,9 +88,11 @@ push to main ─▶ GitHub Actions ─▶ verify ─▶ image (amd64 + arm64) �
 
 ## Quirks of the platform
 
-Found by deploying River Raid for real (zs 0.14.0, 2026-10-01); not yet observed with this app, and to be re-checked on its first deploys. They are the platform's and are not fixed here; the pipeline is built around them.
+Found by deploying River Raid for real (zs 0.14.0, 2026-10-01) and seen again with Space Invaders (2026-10-02). They are the platform's and are not fixed here; the pipeline is built around them.
 
 - **A redeploy of an app with a named volume is reported as failed, although it works.** Every `zs deploy` after the first swapped the container and applied the new image and environment (the instance stayed `RUNNING` and answered), and then two `FAILED` records followed with `(HTTP code 400) bad parameter - Duplicate mount point: /data`. The backend's rollback path (`buildRollbackServicePayload` in `ReconcileCommandResult`) sends the named volume both as a managed mount and as a raw bind, without the de-duplication that the start path (`buildServiceStartPayload` in `OrchestratorService`) has. `zs logs` returned that error text instead of the log for a few seconds after a deploy.
+- **Space Invaders showed the same:** each redeploy was reported as failed with `Duplicate mount point: /data`, `zs list` showed the instance as `ERROR` for a few seconds and then as `RUNNING` again, and `/api/health` answered with the new environment throughout.
+- **The gateway answers a 404 of the app with its own page.** A path that the app would answer with 404 (a file that does not exist, an unknown route of the API) reaches the visitor as the gateway's page, with status 200, a `server: Caddy` header and none of the security headers of the app. Seen on both apps. What exists is unaffected: the page, the assets and the API answer with the headers of the app, which were checked by hand on every kind of response (page, asset, favicon, JSON, 400, 415).
 - **`zs deploy` exits with 0 when the deployment failed**; it only prints it. A script cannot rely on the exit code.
 - So the workflow does not trust `zs`: the image carries its commit (`APP_REVISION`, set from the `REVISION` build argument), `/api/health` reports it, and the deploy job waits for the commit it deployed. If the platform one day stops adding the failed records, nothing changes.
 - The security log reached `zs logs` some seconds after the event.

@@ -115,7 +115,7 @@ Levels 1 and 2 where they apply to a public, anonymous service, plus a few level
 | 3.2.1, 3.2.2 | L1 | Safe rendering context | Met | CSP, `nosniff`, React. |
 | 3.4.1 | L1 | HSTS of at least one year | Met | `create-app.ts` (the host must serve HTTPS). |
 | 3.4.2 | L1 | CORS | Met | No CORS headers; same origin. |
-| 3.4.3, 3.4.4, 3.4.5, 3.4.6 | L2 | CSP, `nosniff`, Referrer-Policy, framing | Met | `create-app.ts` and its tests; verified by hand on the live River Raid server for every kind of response, to be repeated here. |
+| 3.4.3, 3.4.4, 3.4.5, 3.4.6 | L2 | CSP, `nosniff`, Referrer-Policy, framing | Met | `create-app.ts` and its tests; verified by hand on the live servers of River Raid and of this game (2026-10-02) for the page, an asset, the favicon, JSON, a 400 and a 415. The gateway replaces a 404 of the app with its own page, which has none of these headers (see [deploy.md](deploy.md)). |
 | 3.4.8 | L3 | COOP | Met | `same-origin`. |
 | 3.5.1, 3.5.2, 3.5.3 | L1 | CSRF, preflight, safe methods | Met | `require-json-body.ts`; writes are POST with JSON. |
 | 4.1.1 | L1 | Content type with charset | Met | Pages are `text/html; charset=utf-8`; JSON has no charset parameter. |
@@ -125,7 +125,7 @@ Levels 1 and 2 where they apply to a public, anonymous service, plus a few level
 | 11.5.1 | L2 | CSPRNG, 128 bits | Met | `session-id.ts`. |
 | 13.4.1 | L1 | No version control metadata served | Met | Only `dist/` is served; the image has no `.git`. |
 | 13.4.2, 13.4.3, 13.4.4, 13.4.5 | L2 | No debug mode, listings, `TRACE`, stray endpoints | Met | One public non-API endpoint: `/api/health`. |
-| 13.4.6, 13.4.7 | L3 | No version header, only safe file types | Met | Checked by hand on the live River Raid server, to be repeated here. The health check reports the commit of the app (a public repository) and no component versions. |
+| 13.4.6, 13.4.7 | L3 | No version header, only safe file types | Met | Checked by hand on the live servers of River Raid and of this game (2026-10-02): the only `server` header is the gateway's (`Caddy`), the app sends none. The health check reports the commit of the app (a public repository) and no component versions. |
 | 14.2.1 | L1 | No sensitive data in URLs | Met | Only `limit`. |
 | 14.3.3 | L2 | Browser storage | Met | `localStorage` keeps the initials, the mute setting and the answer to the consent banner. |
 | 15.1.1, 15.2.1 | L1 | Remediation timeframes for components | Met | Dependabot weekly, `SECURITY.md`. |
@@ -176,7 +176,7 @@ These are the findings of the review of the River Raid server, which this game's
 **Deploy**
 
 - The pipeline and the platform that hosts the game are described in [deploy.md](deploy.md). On the ZeroServer Community Cloud the gateway terminates HTTPS and the app runs as one instance.
-- Put the server behind HTTPS. Set `TRUST_PROXY` to the number of reverse proxies that append to `X-Forwarded-For` (`1` for a single platform proxy), otherwise every client shares the proxy's allowance. Leave it at `0` when clients reach the server directly. On the ZeroServer Community Cloud it was measured as `2` for River Raid, the first app deployed there; it is to be re-checked for this app (deploy.md, step 6).
+- Put the server behind HTTPS. Set `TRUST_PROXY` to the number of reverse proxies that append to `X-Forwarded-For` (`1` for a single platform proxy), otherwise every client shares the proxy's allowance. Leave it at `0` when clients reach the server directly. On the ZeroServer Community Cloud it was measured as `2` for River Raid and again for this game (deploy.md, step 6).
 - Keep the database on a persistent volume. Only one instance may use it.
 - Suggested container flags: `--read-only --tmpfs /tmp --cap-drop ALL --security-opt no-new-privileges -v space-invaders-data:/data` (the CI runs the image with them).
 

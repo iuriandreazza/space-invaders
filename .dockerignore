@@ -1,0 +1,11 @@
+node_modules
+dist
+dist-server
+coverage
+data
+.git
+.claude
+.env
+.env.*
+*.sqlite
+*.log

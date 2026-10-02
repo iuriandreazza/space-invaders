@@ -11,9 +11,9 @@ services:
     image: ghcr.io/iuriandreazza/space-invaders:latest
     env:
       # Two proxies stand in front of the container (the gateway's Caddy and the FRP vhost), each appending to
-      # X-Forwarded-For, and the rate limit tells players apart by the address that comes out of that. Measured on the
-      # first app deployed on the platform (River Raid): with 1 every player showed up as the gateway's own address.
-      # To be re-checked for this app, see docs/deploy.md, step 6.
+      # X-Forwarded-For, and the rate limit tells players apart by the address that comes out of that. Measured on this
+      # app and on River Raid: with 2 the log shows the real client address, with 1 every player showed up as the
+      # gateway's own address. See docs/deploy.md, step 6.
       - TRUST_PROXY=2
     ports:
       - "8080"

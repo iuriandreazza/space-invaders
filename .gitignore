@@ -1,0 +1,23 @@
+# dependencies
+node_modules/
+
+# build output
+dist/
+dist-server/
+coverage/
+
+# local data and secrets
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm
+data/
+.env
+.env.*
+!.env.example
+
+# tooling
+.claude/
+.DS_Store
+*.log
+.vite/

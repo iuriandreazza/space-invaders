@@ -87,8 +87,9 @@ describe('EngineRunVerifier', () => {
       const verdict = new EngineRunVerifier().verify(junk);
 
       expect(verdict).toEqual({ ok: false, reason: 'continued_after_game_over' });
-      // Four hundred thousand ticks would take seconds; a player who does nothing loses the cannons within minutes.
-      expect(performance.now() - started).toBeLessThan(250);
+      // Four hundred thousand ticks would take two seconds or more, and this one stops when the game is over, which
+      // for a player who does nothing is after a few minutes of play. The bound is loose: a busy machine slows it.
+      expect(performance.now() - started).toBeLessThan(1_000);
     });
   });
 

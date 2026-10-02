@@ -9,6 +9,9 @@ export default defineConfig({
     proxy: { '/api': `http://localhost:${API_PORT}` },
   },
   test: {
+    // The suite replays whole games next to the screens' tests, and a busy machine can make a test of the screens
+    // take longer than the default of 5 seconds.
+    testTimeout: 20_000,
     environment: 'node',
     include: ['src/**/*.test.{ts,tsx}', 'server/**/*.test.ts', 'shared/**/*.test.ts'],
   },

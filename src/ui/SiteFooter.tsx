@@ -1,8 +1,11 @@
-/** The icons are served from this site: the content security policy keeps the page from loading images of others. */
-const CREDITS: ReadonlyArray<{ name: string; href: string; icon: string }> = [
-  { name: 'Iuri Andreazza', href: 'https://iuriandreazza.com.br', icon: '/credits/iuri-andreazza.svg' },
+/**
+ * The favicons of the three sites, copied: the content security policy keeps the page from loading images of others.
+ * The Noûs one is its icon for dark pages, since this footer is dark.
+ */
+export const CREDITS: ReadonlyArray<{ name: string; href: string; icon: string }> = [
+  { name: 'Iuri Andreazza', href: 'https://iuriandreazza.com.br', icon: '/credits/iuri-andreazza.png' },
   { name: 'Noûs', href: 'https://nous.biz', icon: '/credits/nous.png' },
-  { name: 'ZeroServer', href: 'https://zeroserver.cc', icon: '/credits/zeroserver.png' },
+  { name: 'ZeroServer', href: 'https://zeroserver.cc', icon: '/credits/zeroserver.svg' },
 ];
 
 interface SiteFooterProps {
@@ -16,7 +19,7 @@ export function SiteFooter({ onOpenCookieSettings }: SiteFooterProps) {
         {CREDITS.map(({ name, href, icon }) => (
           <li key={href}>
             <a href={href} target="_blank" rel="noopener">
-              <img src={icon} alt="" width={16} height={16} />
+              <img src={icon} alt="" width={20} height={20} />
               {name}
             </a>
           </li>

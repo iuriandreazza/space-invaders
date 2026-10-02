@@ -57,7 +57,7 @@ push to main ─▶ GitHub Actions ─▶ verify ─▶ image (amd64 + arm64) �
    gh variable set APP_URL --body https://app-xxxx.apps.zeroserver.cc --repo iuriandreazza/space-invaders
    gh variable set DEPLOY_ENABLED --body true --repo iuriandreazza/space-invaders
    ```
-   The same address is written out in three places of [`index.html`](../index.html), the canonical link, `og:url` and `og:image`, because link-preview crawlers only follow absolute URLs. Change them to it.
+   That address is also what the link-preview tags need: [`index.html`](../index.html) has none yet, because crawlers only follow absolute URLs and the address did not exist before the deploy. Add the canonical link, `og:url` and `og:image` (with a 1200×630 picture in `public/`) using it.
 6. **Check which address the server sees**, because the rate limit depends on it. `TRUST_PROXY` in `zs.yaml` says how many proxies stand in front of the container and append to `X-Forwarded-For`. Redeploy with `LOG_CLIENT_ADDRESS=true`, send a request that is refused (once with a forged `X-Forwarded-For`) and read the log:
    ```bash
    curl -s -X POST -H 'content-type: text/plain' -d x "$APP_URL/api/sessions"      # 415, logged

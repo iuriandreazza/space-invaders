@@ -93,11 +93,11 @@ These flags are the recommended hardening, and the CI builds the image and runs 
 
 Every push to `main` is verified by [GitHub Actions](.github/workflows/ci.yml), built as a multi-architecture image and, once switched on, deployed with the `zs` CLI to the [ZeroServer Community Cloud](https://zeroserver.cc) as a single instance, with its SQLite file on a persistent volume. [`docs/deploy.md`](docs/deploy.md) has the setup (including the repository variable `GA_MEASUREMENT_ID` for analytics), the day-to-day commands and what to expect from one instance; [ADR 0004](docs/adr/0004-single-instance-on-zeroserver.md) says why it is not several.
 
-### Link previews
+### Link previews and credits
 
-The tags that make a shared link look good (Open Graph and the X card) are in [`index.html`](index.html), and the 1200×630 picture they point to is [`public/og-image.png`](public/og-image.png). Crawlers do not run scripts and only follow absolute URLs, so the address of the site is written out in three places there: the canonical link, `og:url` and `og:image`. Change all three when the site gets another address, and ask Facebook's Sharing Debugger or LinkedIn's Post Inspector to fetch the page again, since they keep the old preview.
+There are no Open Graph or X card tags yet: they need absolute URLs (crawlers do not run scripts), and the public address of the site only exists after the first deploy. Once it does, the canonical link, `og:url`, `og:image` and `twitter:*` tags go in [`index.html`](index.html) together with a 1200×630 picture in `public/`, all three addresses spelled out.
 
-The credits at the foot of the title screen use the icons in [`public/credits`](public/credits). They are copies on purpose: the content security policy only lets the page load images from its own origin.
+The credits in the footer use the favicons of the three sites, in [`public/credits`](public/credits). They are copies on purpose: the content security policy only lets the page load images from its own origin. A test checks that every icon the footer points to exists.
 
 ### API
 

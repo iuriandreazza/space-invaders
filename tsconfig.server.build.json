@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.server.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": false,
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": false,
+    "outDir": "dist-server",
+    "rootDir": ".",
+    "tsBuildInfoFile": null
+  },
+  "include": ["server", "shared"],
+  "exclude": ["**/*.test.ts", "server/testing/**", "shared/game/testing/**"]
+}

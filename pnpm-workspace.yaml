@@ -1,0 +1,4 @@
+# Supply chain: never install a release younger than a day (in minutes), and fail instead of
+# quietly making an exception. A freshly published package is where compromises usually land.
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true

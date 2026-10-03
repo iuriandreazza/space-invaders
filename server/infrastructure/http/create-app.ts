@@ -28,6 +28,9 @@ const ONE_YEAR_SECONDS = 365 * 24 * 60 * 60;
 const GOOGLE_TAG_MANAGER = 'https://www.googletagmanager.com';
 const GOOGLE_ANALYTICS = 'https://*.google-analytics.com';
 
+/** The only page allowed to show the game in a frame. */
+const EMBEDDING_ORIGIN = 'https://escritoriio.iuriandreazza.com.br';
+
 const CONTENT_SECURITY_POLICY = {
   defaultSrc: ["'none'"],
   scriptSrc: ["'self'", GOOGLE_TAG_MANAGER],
@@ -36,7 +39,7 @@ const CONTENT_SECURITY_POLICY = {
   connectSrc: ["'self'", GOOGLE_TAG_MANAGER, GOOGLE_ANALYTICS, 'https://*.google.com'],
   baseUri: ["'none'"],
   formAction: ["'self'"],
-  frameAncestors: ["'none'"],
+  frameAncestors: [EMBEDDING_ORIGIN],
 };
 
 /** A year, as ASVS 3.4.1 asks; Hono's default is 180 days. */
@@ -81,8 +84,8 @@ export function createApp({ service, staticDir, security, revision }: AppOptions
     secureHeaders({
       contentSecurityPolicy: CONTENT_SECURITY_POLICY,
       strictTransportSecurity: STRICT_TRANSPORT_SECURITY,
-      // Says what the CSP's frame-ancestors says, for the old browsers that only know this header.
-      xFrameOptions: 'DENY',
+      // Left out on purpose: it cannot name an origin, so it would block the one frame-ancestors allows.
+      xFrameOptions: false,
       permissionsPolicy: DENIED_BROWSER_FEATURES,
     }),
   );
